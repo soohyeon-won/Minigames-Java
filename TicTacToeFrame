@@ -1,0 +1,82 @@
+package week13.p10;
+
+
+//TicTacToeFrame.java -------------------------------------------
+
+
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class TicTacToeFrame extends JFrame
+{
+	private JButton[][] buttons = new JButton[3][3];
+	private String player = "X";
+	private TicTacToe game;
+
+	// 구성자
+	public TicTacToeFrame()
+	{
+		setTitle("TicTacToe Game");
+		setSize(200, 200);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		game = new TicTacToe();
+
+		// GridLayout이 TicTacToeFrame의 layout manager가 되도록 설정
+		GridLayout gLayout = new GridLayout(3,3);
+		setLayout(gLayout);
+
+		for(int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++) 
+			{
+				buttons[i][j] = new JButton();
+				add(buttons[i][j]);
+				buttons[i][j].addActionListener(new ClickListener());
+			}
+		}
+	}
+
+	// Inner class
+	class ClickListener implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent e) 
+		{
+			// 어느 위치의 버튼이 클릭되었는지 찾아서 처리
+			for(int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++) 
+				{
+					if(buttons[i][j] == e.getSource()) // 이벤트 소스가 i, j 위치의 버튼이라면
+					{
+						// TicTacToeFrame에서
+						buttons[i][j].setText(player);
+						buttons[i][j].setEnabled(false);	// button[i][j]를 비활성화시킴
+						
+						// TicTacToe에서
+						game.set(i, j, player);
+						if(!game.getWinner().equals(""))	// 승부가 난 경우
+						{
+							JOptionPane.showMessageDialog(null, "Winner is " + game.getWinner());
+							System.exit(0);
+						}
+						else if (player.equals("O"))	// 승부가 나지 않은 경우 player를 바꿔줌
+							player = "X";
+						else
+							player = "O";
+						return;	// i, j 위치 클릭을 처리했으므로 더 이상 루프를 돌지 않고 바로 리턴!
+					}
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args){
+		TicTacToeFrame frame = new TicTacToeFrame();
+		frame.setVisible(true);
+	}
+}
